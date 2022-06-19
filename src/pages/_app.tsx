@@ -4,16 +4,20 @@ import theme from 'theme';
 import NextNProgress from "nextjs-progressbar";
 import { ApolloProvider } from '@apollo/client';
 import { apolloClient } from "src/apollo/apolloClient";
+import { WagmiConfig } from 'wagmi'
+import { wagmiClient } from 'src/wagmi/wagmiClient'
 
 function App({ Component, pageProps }: AppPropsWithLayout) {
   // Use the layout defined at the page level, if available
   const getLayout = Component.getLayout ?? ((page) => page);
   return (
     <ApolloProvider client={apolloClient}>
-      <ChakraProvider resetCSS theme={theme}>
-        <NextNProgress />
-        {getLayout(<Component {...pageProps} />)}
-      </ChakraProvider>
+      <WagmiConfig client={wagmiClient}>
+        <ChakraProvider resetCSS theme={theme}>
+          <NextNProgress />
+          {getLayout(<Component {...pageProps} />)}
+        </ChakraProvider>
+      </WagmiConfig>
     </ApolloProvider>
   )
 }

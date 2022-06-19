@@ -10,6 +10,7 @@ import {
     Stack,
 } from '@chakra-ui/react';
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
+import ConnectWalletButton from './ConnectWalletButton';
 
 export default function Navbar() {
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -42,6 +43,7 @@ export default function Navbar() {
                             <NextLink href='/about' passHref>
                                 <Link>About</Link>
                             </NextLink>
+                            <ConnectWalletButton />
                         </HStack>
                     </HStack>
                 </Flex>

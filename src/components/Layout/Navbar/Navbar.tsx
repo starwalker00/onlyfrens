@@ -8,9 +8,11 @@ import {
     useDisclosure,
     useColorModeValue,
     Stack,
+    Text,
 } from '@chakra-ui/react';
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
 import ConnectWalletButton from './ConnectWalletButton';
+import config from "src/config";
 
 export default function Navbar() {
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -44,6 +46,7 @@ export default function Navbar() {
                                 <Link>About</Link>
                             </NextLink>
                             <ConnectWalletButton />
+                            <Text fontSize="sm">{config?.chain.CHAIN_NAME}</Text>
                         </HStack>
                     </HStack>
                 </Flex>

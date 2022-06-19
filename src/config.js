@@ -33,7 +33,7 @@ const mainnet = {
 };
 
 const config = {
-    ...(process.env.REACT_APP_STAGE === "mainnet" ? mainnet : testnet),
+    ...(process.env.NEXT_PUBLIC_APP_STAGE === "mainnet" ? mainnet : testnet),
     urls: {
         landing: "https://lens.xyz",
         github: "",

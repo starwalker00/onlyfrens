@@ -2,18 +2,20 @@ import type { NextPageWithLayout } from 'src/custom-types/page'
 import type { ReactElement } from 'react'
 import { Layout, Navbar } from 'src/components/Layout'
 import { Center, Heading } from '@chakra-ui/react'
+import ExplorerProfile from "src/components/Explorer/ExplorerProfile";
 
-const Home: NextPageWithLayout = () => {
+const ExplorerProfilePage: NextPageWithLayout = () => {
     return (
         <>
             <Center>
-                <Heading>Home</Heading>
+                <Heading>ExplorerProfilePage</Heading>
             </Center>
+            <ExplorerProfile />
         </>
     )
 }
 
-Home.getLayout = function getLayout(page: ReactElement) {
+ExplorerProfilePage.getLayout = function getLayout(page: ReactElement) {
     return (
         <Layout>
             <Navbar />
@@ -22,4 +24,4 @@ Home.getLayout = function getLayout(page: ReactElement) {
     )
 }
 
-export default Home
+export default ExplorerProfilePage

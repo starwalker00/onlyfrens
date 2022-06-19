@@ -33,6 +33,12 @@ export default function Navbar() {
                             <NextLink href='/' passHref>
                                 <Link>Home</Link>
                             </NextLink>
+                            <NextLink href='/explorer/profiles' passHref>
+                                <Link>ExplorerProfile</Link>
+                            </NextLink>
+                            <NextLink href='/explorer/publications' passHref>
+                                <Link>ExplorerPublications</Link>
+                            </NextLink>
                             <NextLink href='/about' passHref>
                                 <Link>About</Link>
                             </NextLink>

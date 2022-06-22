@@ -3,6 +3,7 @@ import { useDisclosure } from '@chakra-ui/hooks'
 import ConnectWalletModal from 'src/components/Modals/ConnectWalletModal'
 import { namedConsoleLog } from 'src/utils/logUtils'
 import { useAccount, useDisconnect } from 'wagmi'
+import { truncateEthAddress } from 'src/utils/ethersService'
 
 function handleOtherButtonClick() {
     console.log("handleFollowButtonClick")
@@ -19,9 +20,7 @@ export default function ConnectWalletButton() {
         return (
             <>
                 <ConnectWalletModal connectWalletModalDisclosure={connectWalletModalDisclosure} />
-                <Button
-                    onClick={connectWalletModalDisclosure.onOpen}
-                >
+                <Button onClick={connectWalletModalDisclosure.onOpen}>
                     Connect Wallet
                 </Button>
             </>
@@ -30,9 +29,8 @@ export default function ConnectWalletButton() {
     return (
         <>
             <ConnectWalletModal connectWalletModalDisclosure={connectWalletModalDisclosure} />
-            <Button
-                onClick={() => disconnect()}
-            >
+            <Button>{truncateEthAddress(data?.address as string)}</Button>
+            <Button onClick={() => disconnect()}>
                 Disconnect
             </Button>
         </>

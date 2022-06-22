@@ -1,4 +1,4 @@
-import { HStack, Box } from '@chakra-ui/react'
+import { HStack, Box, Tag } from '@chakra-ui/react'
 import FollowButton from './FollowButton'
 import { useAccount } from 'wagmi'
 import { namedConsoleLog } from 'src/utils/logUtils'
@@ -12,9 +12,10 @@ const ProfileItem = ({ profile }) => {
             <Box>{profile.handle}</Box>
             <Box>{profile.ownedBy}</Box>
             <FollowButton
-                doesFollow={false}
+                isFollowedByMe={profile.isFollowedByMe}
                 account={data}
                 profileId={profile.id} />
+            {Boolean(profile.isFollowedByMe) && <Tag size='sm'>followed</Tag>}
         </HStack>
     )
 }

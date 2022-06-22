@@ -8,7 +8,7 @@ import { useFollow } from 'src/apollo/useFollow'
 
 const FollowButton = ({
     account,
-    doesFollow,
+    isFollowedByMe,
     profileId
 }) => {
     const [follow, data, error, loading] = useFollow(null)

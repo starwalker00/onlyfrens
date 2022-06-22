@@ -2,6 +2,7 @@ export const EXPLORE_PROFILES = `
   query($request: ExploreProfilesRequest!) {
     exploreProfiles(request: $request) {
       items {
+        isFollowedByMe
         id
         name
         bio

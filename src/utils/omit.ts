@@ -1,3 +1,4 @@
+// @ts-ignore
 import omitDeep from 'omit-deep'
 
 const omit = (object: any, name: string) => {

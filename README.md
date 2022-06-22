@@ -1,3 +1,9 @@
+Resources
+
+- [typescript types from json](http://json2ts.com/)
+- [encode/decode JWT](https://jwt.io/)
+
+
 This is a custom "multi single-page" typescript [Next.js](https://nextjs.org/) template.
 
 It features :
@@ -7,3 +13,4 @@ It features :
 - [A Multi Single-Page Layout](https://github.com/vercel/next.js/tree/canary/examples/layout-component)
 - AppContext
 - [Next.js Progressbar](https://www.npmjs.com/package/nextjs-progressbar)
+

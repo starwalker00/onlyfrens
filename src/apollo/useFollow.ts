@@ -8,6 +8,7 @@ import { splitSignature } from 'src/utils/ethersService'
 import { LensHubProxy } from 'src/abis/LensHubProxy'
 
 import { useAuthenticate } from './useAuthenticate'
+import { namedConsoleLog } from 'src/utils/logUtils'
 
 // used to inform the relayer that pays the fees
 const BROADCAST_MUTATION = gql`
@@ -58,8 +59,9 @@ const CREATE_FOLLOW_TYPED_DATA_MUTATION = gql`
 export const useFollow = (profileId: any) => {
   const url = 'https://jsonplaceholder.typicode.com/todos/1'
   const [data, setData] = useState<any>(null);
+  const [followed, setFollowed] = useState<any>(false);
   const [error, setError] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const { data: account } = useAccount()
   const [authenticate] = useAuthenticate();
   const [createFollowTypedDataAPI, { loading: typedDataLoading }] = useMutation(
@@ -75,6 +77,7 @@ export const useFollow = (profileId: any) => {
   )
   async function follow(profileId: string) {
     try {
+      setLoading(true);
       // authenticate
       // account.address should never be undefined if we reach this
       const res = await authenticate(account?.address as string);
@@ -102,15 +105,24 @@ export const useFollow = (profileId: any) => {
         datas: followData,
         sig
       }
-      await writeAsync({ args: inputStruct })
-      // setData(response.data);
+      const writeAsyncResponse = await writeAsync({ args: inputStruct })
+      // namedConsoleLog("writeAsyncResponse", writeAsyncResponse)
+      const { hash, wait } = writeAsyncResponse;
+      const txReceipt = await wait();
+      // namedConsoleLog("txReceipt", txReceipt)
+
+      // is tx is successful, update state without refetching with API
+      if (Boolean(txReceipt?.status)) {
+        setFollowed(true)
+      }
     } catch (error) {
       console.log(error)
+      setFollowed(true)
       setError(error);
       setLoading(false);
     } finally {
       setLoading(false);
     }
   };
-  return [follow, data, error, loading] as const;
+  return [follow, followed, error, loading] as const;
 };

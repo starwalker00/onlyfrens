@@ -26,7 +26,7 @@ export const useAuthenticate = () => {
   // hook state
   // const [data, setData] = useState<any>(null);
   const [error, setError] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
   // API calls and wallet signature
   const [loadChallengeAPI] = useLazyQuery(CHALLENGE_QUERY, {
@@ -51,6 +51,7 @@ export const useAuthenticate = () => {
     // begin authentication process
     console.log("useAuthenticate:: authenticating " + address)
     try {
+      setLoading(true);
       const challengeResponse = await loadChallengeAPI({
         variables: {
           request: {

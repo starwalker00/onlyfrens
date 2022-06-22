@@ -3,6 +3,7 @@ import { gql, useLazyQuery, useMutation } from '@apollo/client'
 import { useSignMessage } from 'wagmi'
 
 import { getTokens, saveTokens } from 'src/utils/localStorageUtils'
+import { getAddress } from 'src/utils/jwtService'
 
 const CHALLENGE_QUERY = gql`
   query Challenge($request: ChallengeRequest!) {
@@ -39,11 +40,16 @@ export const useAuthenticate = () => {
   // main function
   async function authenticate(address: string) {
     // try to get access-token from local storage
-    // nothing to do if its present, refresh is handled by ApolloLink in src/apollo/apolloClient
+    // nothing to do if its present for the connected address, 
+    // refresh is handled by ApolloLink in src/apollo/apolloClient
     const auth = getTokens();
-    if (Boolean(auth))
+    const authAddress = getAddress(auth)
+    if (Boolean(auth) && authAddress == address) {
+      console.log("useAuthenticate:: localStorage found for address: " + address)
       return
-    // begin first authentication process
+    }
+    // begin authentication process
+    console.log("useAuthenticate:: authenticating " + address)
     try {
       const challengeResponse = await loadChallengeAPI({
         variables: {
@@ -68,6 +74,7 @@ export const useAuthenticate = () => {
       console.log(error)
       setError(error);
       setLoading(false);
+      throw error;
     } finally {
       setLoading(false);
     }

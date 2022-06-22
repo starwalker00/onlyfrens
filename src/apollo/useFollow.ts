@@ -1,13 +1,13 @@
-// @ts-nochec
-
-import { LensHubProxy } from 'src/abis/LensHubProxy'
-import { gql, useLazyQuery, useMutation } from '@apollo/client'
-import config from 'src/config'
+import { useState } from 'react'
+import { gql, useMutation } from '@apollo/client'
 import { useAccount, useContractWrite, useSignTypedData } from 'wagmi'
+
+import config from 'src/config'
 import omit from 'src/utils/omit'
-import { useEffect, useState } from 'react'
-import { useAuthenticate } from './useAuthenticate'
 import { splitSignature } from 'src/utils/ethersService'
+import { LensHubProxy } from 'src/abis/LensHubProxy'
+
+import { useAuthenticate } from './useAuthenticate'
 
 // used to inform the relayer that pays the fees
 const BROADCAST_MUTATION = gql`

@@ -1,8 +1,7 @@
-// @ts-ignore
-import omitDeep from 'omit-deep'
+import _ from 'lodash';
 
 const omit = (object: any, name: string) => {
-    return omitDeep(object, name)
+    return _.omit(object, name)
 }
 
 export default omit

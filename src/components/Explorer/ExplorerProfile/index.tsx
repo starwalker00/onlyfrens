@@ -1,9 +1,16 @@
-import { Center, VStack, Box } from '@chakra-ui/react'
-import { EXPLORE_PROFILES } from 'src/apollo/exploreProfiles'
+import { useEffect } from 'react'
+import { Center, VStack } from '@chakra-ui/react'
 import { useQuery, gql } from '@apollo/client'
+import { useAccount } from 'wagmi'
+
+import { EXPLORE_PROFILES } from 'src/apollo/exploreProfiles'
 import ProfileList from './ProfileList'
+import { namedConsoleLog } from 'src/utils/logUtils'
+import { deleteTokens } from 'src/utils/localStorageUtils'
 
 const ExplorerProfile = () => {
+    const { data: account } = useAccount()
+    namedConsoleLog("account", account)
     const request = {
         sortCriteria: 'MOST_FOLLOWERS',
         // cursor: "{\"offset\":0}",
@@ -18,6 +25,12 @@ const ExplorerProfile = () => {
     });
     const exploreProfiles = exploreProfilesQueryResult?.data?.exploreProfiles?.items;
     const haveExploreProfiles = Boolean(exploreProfiles?.length > 0);
+
+    // remove access-token and refetch data when account changes to update follow status
+    useEffect(() => {
+        deleteTokens()
+        exploreProfilesQueryResult.refetch()
+    }, [account]);
 
     return (
         <>

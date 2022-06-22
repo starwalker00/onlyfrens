@@ -9,20 +9,31 @@ import {
     VStack,
     Button, Text
 } from '@chakra-ui/react'
-import { useConnect } from 'wagmi'
+import { useConnect, useAccount } from 'wagmi'
 import { useEffect } from 'react'
 import config from 'src/config'
+import { useAuthenticate } from 'src/apollo/useAuthenticate'
+import { namedConsoleLog } from 'src/utils/logUtils'
 
 function ConnectWalletModal({ connectWalletModalDisclosure }) {
     const { isOpen, onOpen, onClose } = connectWalletModalDisclosure
     const { connect, connectors, error, isConnecting, pendingConnector, isConnected } = useConnect({
         chainId: config.chain.CHAIN_ID,
     })
+    const { data: account } = useAccount()
+    const [authenticate, isAuthenticated] = useAuthenticate();
 
     // close modal after successful connection
+    // TODO: fix signature after wallet conection / connected address change
     useEffect(() => {
-        onClose()
-    }, [isConnected]);
+        (async function () {
+            if (isConnected && !isAuthenticated) {
+                // namedConsoleLog("account?.address", account)
+                // const res = await authenticate(account?.address);
+                onClose()
+            }
+        })();
+    }, [account?.address]);
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>

@@ -24,7 +24,7 @@ export const AUTHENTICATE_MUTATION = gql`
 
 export const useAuthenticate = () => {
   // hook state
-  // const [data, setData] = useState<any>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<any>(false);
   const [error, setError] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -46,6 +46,8 @@ export const useAuthenticate = () => {
     const authAddress = getAddress(auth)
     if (Boolean(auth) && authAddress == address) {
       console.log("useAuthenticate:: localStorage found for address: " + address)
+      setIsAuthenticated(true)
+      setLoading(false);
       return
     }
     // begin authentication process
@@ -81,5 +83,5 @@ export const useAuthenticate = () => {
     }
   };
 
-  return [authenticate, error, loading] as const;
+  return [authenticate, isAuthenticated, error, loading] as const;
 };

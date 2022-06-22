@@ -16,7 +16,7 @@ const FollowFacet = ({
         follow(profileId)
         namedConsoleLog("followed", followed)
     }
-    isFollowedByMe = isFollowedByMe || followed;
+    isFollowedByMe = isFollowedByMe || followed
     return (
         <>
             <ConnectWalletModal connectWalletModalDisclosure={connectWalletModalDisclosure} />

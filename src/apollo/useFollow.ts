@@ -117,7 +117,7 @@ export const useFollow = (profileId: any) => {
       }
     } catch (error) {
       console.log(error)
-      setFollowed(true)
+      setFollowed(false)
       setError(error);
       setLoading(false);
     } finally {

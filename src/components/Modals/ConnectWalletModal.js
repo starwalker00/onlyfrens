@@ -11,10 +11,13 @@ import {
 } from '@chakra-ui/react'
 import { useConnect } from 'wagmi'
 import { useEffect } from 'react'
+import config from 'src/config'
 
 function ConnectWalletModal({ connectWalletModalDisclosure }) {
     const { isOpen, onOpen, onClose } = connectWalletModalDisclosure
-    const { connect, connectors, error, isConnecting, pendingConnector, isConnected } = useConnect()
+    const { connect, connectors, error, isConnecting, pendingConnector, isConnected } = useConnect({
+        chainId: config.chain.CHAIN_ID,
+    })
 
     // close modal after successful connection
     useEffect(() => {

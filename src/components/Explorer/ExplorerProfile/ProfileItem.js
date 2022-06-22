@@ -13,7 +13,8 @@ const ProfileItem = ({ profile }) => {
             <Box>{profile.ownedBy}</Box>
             <FollowButton
                 doesFollow={false}
-                account={data} />
+                account={data}
+                profileId={profile.id} />
         </HStack>
     )
 }

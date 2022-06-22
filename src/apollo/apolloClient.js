@@ -11,6 +11,7 @@ import {
 import jwtDecode from "jwt-decode";
 import config from "../config";
 import { cache } from './cache';
+import { namedConsoleLog } from "src/utils/logUtils";
 
 const API_URL = config.apollo.APOLLO_URI;
 
@@ -32,6 +33,7 @@ export let apolloClient;
 
 const authLink = new ApolloLink((operation, forward) => {
     const auth = getTokens();
+    namedConsoleLog("auth", auth)
 
     operation.setContext({
         headers: {

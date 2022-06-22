@@ -56,60 +56,61 @@ const CREATE_FOLLOW_TYPED_DATA_MUTATION = gql`
 `
 
 export const useFollow = (profileId: any) => {
-    const url = 'https://jsonplaceholder.typicode.com/todos/1'
-    const [data, setData] = useState<any>(null);
-    const [error, setError] = useState<any>(null);
-    const [loading, setLoading] = useState<boolean>(true);
-    const { data: account } = useAccount()
-    const [authenticate] = useAuthenticate();
-    const [createFollowTypedDataAPI, { loading: typedDataLoading }] = useMutation(
-        CREATE_FOLLOW_TYPED_DATA_MUTATION,
-    )
-    const { signTypedDataAsync } = useSignTypedData()
-    const { writeAsync } = useContractWrite(
-        {
-            addressOrName: config.contracts.LENS_HUB_CONTRACT_ADDRESS,
-            contractInterface: LensHubProxy
+  const url = 'https://jsonplaceholder.typicode.com/todos/1'
+  const [data, setData] = useState<any>(null);
+  const [error, setError] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const { data: account } = useAccount()
+  const [authenticate] = useAuthenticate();
+  const [createFollowTypedDataAPI, { loading: typedDataLoading }] = useMutation(
+    CREATE_FOLLOW_TYPED_DATA_MUTATION,
+  )
+  const { signTypedDataAsync } = useSignTypedData()
+  const { writeAsync } = useContractWrite(
+    {
+      addressOrName: config.contracts.LENS_HUB_CONTRACT_ADDRESS,
+      contractInterface: LensHubProxy
+    },
+    'followWithSig',
+  )
+  async function follow(profileId: string) {
+    try {
+      // authenticate
+      // account.address should never be undefined if we reach this
+      const res = await authenticate(account?.address as string);
+      // follow
+      const createFollowTypedDataAPIResponse = await createFollowTypedDataAPI({
+        variables: {
+          request: {
+            follow: { profile: profileId },
+          },
         },
-        'followWithSig',
-    )
-    async function follow(profileId: string) {
-        try {
-            // authenticate
-            const res = await authenticate(account?.address);
-            // follow
-            const createFollowTypedDataAPIResponse = await createFollowTypedDataAPI({
-                variables: {
-                    request: {
-                        follow: { profile: profileId },
-                    },
-                },
-            });
-            console.log(createFollowTypedDataAPIResponse);
-            const { data: { createFollowTypedData: { typedData } } } = createFollowTypedDataAPIResponse;
-            const signTypedDataAsyncResponse = await signTypedDataAsync({
-                domain: omit(typedData?.domain, '__typename'),
-                types: omit(typedData?.types, '__typename'),
-                value: omit(typedData?.value, '__typename')
-            })
-            const { profileIds, datas: followData } = typedData?.value
-            const { v, r, s } = splitSignature(signTypedDataAsyncResponse)
-            const sig = { v, r, s, deadline: typedData.value.deadline }
-            const inputStruct = {
-                follower: account?.address,
-                profileIds,
-                datas: followData,
-                sig
-            }
-            await writeAsync({ args: inputStruct })
-            // setData(response.data);
-        } catch (error) {
-            console.log(error)
-            setError(error);
-            setLoading(false);
-        } finally {
-            setLoading(false);
-        }
-    };
-    return [follow, data, error, loading] as const;
+      });
+      console.log(createFollowTypedDataAPIResponse);
+      const { data: { createFollowTypedData: { typedData } } } = createFollowTypedDataAPIResponse;
+      const signTypedDataAsyncResponse = await signTypedDataAsync({
+        domain: omit(typedData?.domain, '__typename'),
+        types: omit(typedData?.types, '__typename'),
+        value: omit(typedData?.value, '__typename')
+      })
+      const { profileIds, datas: followData } = typedData?.value
+      const { v, r, s } = splitSignature(signTypedDataAsyncResponse)
+      const sig = { v, r, s, deadline: typedData.value.deadline }
+      const inputStruct = {
+        follower: account?.address,
+        profileIds,
+        datas: followData,
+        sig
+      }
+      await writeAsync({ args: inputStruct })
+      // setData(response.data);
+    } catch (error) {
+      console.log(error)
+      setError(error);
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+  return [follow, data, error, loading] as const;
 };

@@ -28,8 +28,8 @@ function ConnectWalletModal({ connectWalletModalDisclosure }) {
     useEffect(() => {
         (async function () {
             if (isConnected && !isAuthenticated) {
-                // namedConsoleLog("account?.address", account)
-                // const res = await authenticate(account?.address);
+                namedConsoleLog("account?.address", account)
+                const res = await authenticate(account?.address);
                 onClose()
             }
         })();

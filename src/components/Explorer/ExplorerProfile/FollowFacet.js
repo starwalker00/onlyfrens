@@ -10,7 +10,6 @@ const FollowFacet = ({
     profileId
 }) => {
     const [follow, followed, error, loading] = useFollow(null)
-    const connectWalletModalDisclosure = useDisclosure()
     function handleFollowButtonClick() {
         console.log("handleFollowButtonClick")
         follow(profileId)
@@ -19,14 +18,9 @@ const FollowFacet = ({
     isFollowedByMe = isFollowedByMe || followed
     return (
         <>
-            <ConnectWalletModal connectWalletModalDisclosure={connectWalletModalDisclosure} />
             <Button
                 size='xs' isLoading={loading}
-                onClick={
-                    account ?
-                        handleFollowButtonClick :
-                        connectWalletModalDisclosure.onOpen
-                }
+                onClick={handleFollowButtonClick}
             >
                 follow
             </Button>

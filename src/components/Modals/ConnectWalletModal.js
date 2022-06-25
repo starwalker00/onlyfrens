@@ -14,6 +14,7 @@ import { useEffect } from 'react'
 import config from 'src/config'
 import { useAuthenticate } from 'src/apollo/useAuthenticate'
 import { namedConsoleLog } from 'src/utils/logUtils'
+import { useGetProfilesByAddress } from 'src/apollo/useGetProfiles'
 
 function ConnectWalletModal({ connectWalletModalDisclosure }) {
     const { isOpen, onOpen, onClose } = connectWalletModalDisclosure
@@ -21,19 +22,25 @@ function ConnectWalletModal({ connectWalletModalDisclosure }) {
         chainId: config.chain.CHAIN_ID,
     })
     const { data: account } = useAccount()
-    const [authenticate, isAuthenticated] = useAuthenticate();
+    const [authenticate, isAuthenticated] = useAuthenticate(account?.address);
+    const { data: profilesByAddress } = useGetProfilesByAddress(account?.address);
+    console.log("profilesByAddress"); console.log(profilesByAddress);
 
     // close modal after successful connection
-    // TODO: fix signature after wallet conection / connected address change
     useEffect(() => {
         (async function () {
-            if (isConnected && !isAuthenticated) {
+            if (isConnected) {
                 namedConsoleLog("account?.address", account)
-                const res = await authenticate(account?.address);
+                if (!isAuthenticated) {
+                    authenticate(account?.address);
+                }
+                // const ownedProfiles = await getProfilesByAddress();
+                // console.log("ownedProfiles")
+                // console.log(ownedProfiles)
                 onClose()
             }
         })();
-    }, [account?.address]);
+    }, [isConnected]);
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>

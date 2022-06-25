@@ -57,47 +57,39 @@ const CREATE_FOLLOW_TYPED_DATA_MUTATION = gql`
 `
 
 export const useFollow = (profileId: any) => {
-  const url = 'https://jsonplaceholder.typicode.com/todos/1'
-  const [data, setData] = useState<any>(null);
+
+  // - lens api mutation - createFollowTypedData
+  // - web3 signing - signTypedData
+  // - web3 call - followWithSig
+
   const [followed, setFollowed] = useState<any>(false);
-  const [error, setError] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+
   const { data: account } = useAccount()
-  const [authenticate] = useAuthenticate();
-  const [createFollowTypedDataAPI, { loading: typedDataLoading }] = useMutation(
-    CREATE_FOLLOW_TYPED_DATA_MUTATION,
-  )
-  const { signTypedDataAsync } = useSignTypedData()
-  const { writeAsync } = useContractWrite(
-    {
-      addressOrName: config.contracts.LENS_HUB_CONTRACT_ADDRESS,
-      contractInterface: LensHubProxy
-    },
-    'followWithSig',
-  )
-  async function follow(profileId: string) {
-    try {
-      setLoading(true);
-      // authenticate
-      // account.address should never be undefined if we reach this
-      const res = await authenticate(account?.address as string);
-      // follow
-      const createFollowTypedDataAPIResponse = await createFollowTypedDataAPI({
-        variables: {
-          request: {
-            follow: { profile: profileId },
-          },
-        },
-      });
-      console.log(createFollowTypedDataAPIResponse);
-      const { data: { createFollowTypedData: { typedData } } } = createFollowTypedDataAPIResponse;
-      const signTypedDataAsyncResponse = await signTypedDataAsync({
+  const [authenticate, isAuthenticated] = useAuthenticate(account?.address as string);
+
+  // 1/3
+  const [createFollowTypedDataAPIMutate] = useMutation(CREATE_FOLLOW_TYPED_DATA_MUTATION, {
+    fetchPolicy: 'network-only',
+    async onCompleted(createFollowTypedDataAPIData) {
+      alert(JSON.stringify(createFollowTypedDataAPIData))
+      const { createFollowTypedData: { typedData } } = createFollowTypedDataAPIData;
+      signTypedData.signTypedData({
         domain: omit(typedData?.domain, '__typename'),
         types: omit(typedData?.types, '__typename'),
         value: omit(typedData?.value, '__typename')
       })
+    },
+    onError(error) {
+      alert(error)
+    }
+  })
+
+  // 2/3
+  const signTypedData = useSignTypedData({
+    onSuccess(signature, typedData) {
+      alert(JSON.stringify(typedData))
       const { profileIds, datas: followData } = typedData?.value
-      const { v, r, s } = splitSignature(signTypedDataAsyncResponse)
+      const { v, r, s } = splitSignature(signature)
       const sig = { v, r, s, deadline: typedData.value.deadline }
       const inputStruct = {
         follower: account?.address,
@@ -105,24 +97,44 @@ export const useFollow = (profileId: any) => {
         datas: followData,
         sig
       }
-      const writeAsyncResponse = await writeAsync({ args: inputStruct })
-      // namedConsoleLog("writeAsyncResponse", writeAsyncResponse)
-      const { hash, wait } = writeAsyncResponse;
-      const txReceipt = await wait();
-      // namedConsoleLog("txReceipt", txReceipt)
+      followWithSig.write({ args: inputStruct })
+    },
+  })
 
-      // is tx is successful, update state without refetching with API
-      if (Boolean(txReceipt?.status)) {
-        setFollowed(true)
+  // 3/3
+  const followWithSig = useContractWrite(
+    {
+      addressOrName: config.contracts.LENS_HUB_CONTRACT_ADDRESS,
+      contractInterface: LensHubProxy
+    },
+    'followWithSig',
+    {
+      async onSuccess(data, args) {
+        alert(JSON.stringify(data))
+        const { hash, wait } = data;
+        const txReceipt = await wait();
+        // // is tx is successful, update state without refetching with API
+        if (Boolean(txReceipt?.status)) {
+          setFollowed(true)
+        }
+      },
+      onError(error) {
+        alert(error)
       }
-    } catch (error) {
-      console.log(error)
-      setFollowed(false)
-      setError(error);
-      setLoading(false);
-    } finally {
-      setLoading(false);
     }
-  };
-  return [follow, followed, error, loading] as const;
+  )
+  function follow(profileId: string) {
+    console.log("useFollow:follow")
+    console.log(`isAuthenticated = ${isAuthenticated}`)
+    if (isAuthenticated) {
+      createFollowTypedDataAPIMutate({
+        variables: {
+          request: {
+            follow: { profile: profileId },
+          },
+        },
+      });
+    }
+  }
+  return [follow, followed] as const;
 };

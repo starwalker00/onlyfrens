@@ -1,6 +1,5 @@
 import { HStack, Box, Button, Tag } from '@chakra-ui/react'
 import { useDisclosure } from '@chakra-ui/hooks'
-import ConnectWalletModal from 'src/components/Modals/ConnectWalletModal'
 import { namedConsoleLog } from 'src/utils/logUtils'
 import { useFollow } from 'src/apollo/useFollow'
 

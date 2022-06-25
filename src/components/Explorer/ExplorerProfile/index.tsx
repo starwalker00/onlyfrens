@@ -7,34 +7,24 @@ import { EXPLORE_PROFILES } from 'src/apollo/exploreProfiles'
 import ProfileList from './ProfileList'
 import { namedConsoleLog } from 'src/utils/logUtils'
 import { deleteTokens } from 'src/utils/localStorageUtils'
+import { useExploreProfiles } from 'src/apollo/useExploreProfiles'
 
 const ExplorerProfile = () => {
     const { data: account } = useAccount()
-    namedConsoleLog("account", account)
-    const request = {
+    const exploreProfilesRequest = {
         sortCriteria: 'MOST_FOLLOWERS',
-        // cursor: "{\"offset\":0}",
         limit: 10,
     };
-    const exploreProfilesQueryResult = useQuery(gql(EXPLORE_PROFILES), {
-        variables: {
-            request,
-        },
-        notifyOnNetworkStatusChange: true,
-        fetchPolicy: "network-only"
-    });
-    const exploreProfiles = exploreProfilesQueryResult?.data?.exploreProfiles?.items;
-    const haveExploreProfiles = Boolean(exploreProfiles?.length > 0);
+    const [exploreProfiles, haveExploreProfiles, pageInfoNext, exploreProfilesQuery] = useExploreProfiles(exploreProfilesRequest);
 
     // remove access-token and refetch data when account changes to update follow status
-    useEffect(() => {
-        deleteTokens()
-        exploreProfilesQueryResult.refetch()
-    }, [account]);
+    // useEffect(() => {
+    //     deleteTokens()
+    //     exploreProfilesQueryResult.refetch()
+    // }, [account]);
 
     return (
         <>
-            {console.log(exploreProfilesQueryResult)}
             {
                 haveExploreProfiles ?
                     <VStack>
@@ -46,11 +36,11 @@ const ExplorerProfile = () => {
                 <input
                     type="button"
                     value="load more"
-                    onClick={() => exploreProfilesQueryResult.fetchMore({
+                    onClick={() => exploreProfilesQuery.fetchMore({
                         variables: {
                             request: {
-                                ...request,
-                                cursor: exploreProfilesQueryResult.data.exploreProfiles.pageInfo.next
+                                ...exploreProfilesRequest,
+                                cursor: pageInfoNext
                             },
                         },
                     })}

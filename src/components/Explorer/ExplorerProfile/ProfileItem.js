@@ -4,8 +4,7 @@ import { useAccount } from 'wagmi'
 import { namedConsoleLog } from 'src/utils/logUtils'
 
 const ProfileItem = ({ profile }) => {
-    const { data, isError, isLoading } = useAccount()
-    namedConsoleLog("data", data)
+    const { data } = useAccount()
     return (
         <HStack dir='row'>
             <Box>{profile.id}</Box>

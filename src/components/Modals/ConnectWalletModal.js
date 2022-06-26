@@ -1,3 +1,5 @@
+import { useEffect } from 'react'
+import { useConnect, useAccount } from 'wagmi'
 import {
     Modal,
     ModalOverlay,
@@ -7,10 +9,9 @@ import {
     ModalBody,
     ModalCloseButton,
     VStack,
-    Button, Text
+    Button
 } from '@chakra-ui/react'
-import { useConnect, useAccount } from 'wagmi'
-import { useEffect } from 'react'
+
 import config from 'src/config'
 import { useAuthenticate } from 'src/apollo/useAuthenticate'
 import { namedConsoleLog } from 'src/utils/logUtils'
@@ -22,7 +23,7 @@ function ConnectWalletModal({ connectWalletModalDisclosure }) {
         chainId: config.chain.CHAIN_ID,
     })
     const { data: account } = useAccount()
-    const [authenticate, isAuthenticated] = useAuthenticate(account?.address);
+    const [authenticate, isAuthenticated] = useAuthenticate();
     const { data: profilesByAddress } = useGetProfilesByAddress(account?.address);
     console.log("profilesByAddress"); console.log(profilesByAddress);
 
@@ -32,15 +33,12 @@ function ConnectWalletModal({ connectWalletModalDisclosure }) {
             if (isConnected) {
                 namedConsoleLog("account?.address", account)
                 if (!isAuthenticated) {
-                    authenticate(account?.address);
+                    authenticate();
                 }
-                // const ownedProfiles = await getProfilesByAddress();
-                // console.log("ownedProfiles")
-                // console.log(ownedProfiles)
                 onClose()
             }
         })();
-    }, [isConnected]);
+    }, [isConnected, isAuthenticated, account]);
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>

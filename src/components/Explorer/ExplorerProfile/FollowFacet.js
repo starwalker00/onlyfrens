@@ -1,5 +1,4 @@
-import { HStack, Box, Button, Tag } from '@chakra-ui/react'
-import { useDisclosure } from '@chakra-ui/hooks'
+import { Button, Tag } from '@chakra-ui/react'
 import { namedConsoleLog } from 'src/utils/logUtils'
 import { useFollow } from 'src/apollo/useFollow'
 
@@ -8,7 +7,7 @@ const FollowFacet = ({
     isFollowedByMe,
     profileId
 }) => {
-    const [follow, followed, error, loading] = useFollow(null)
+    const [follow, followed, error, isError, isLoading] = useFollow()
     function handleFollowButtonClick() {
         console.log("handleFollowButtonClick")
         follow(profileId)
@@ -18,7 +17,7 @@ const FollowFacet = ({
     return (
         <>
             <Button
-                size='xs' isLoading={loading}
+                size='xs' isLoading={isLoading}
                 onClick={handleFollowButtonClick}
             >
                 follow

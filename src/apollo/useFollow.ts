@@ -56,7 +56,7 @@ const CREATE_FOLLOW_TYPED_DATA_MUTATION = gql`
   }
 `
 
-export const useFollow = (profileId: any) => {
+export const useFollow = () => {
 
   // - lens api mutation - createFollowTypedData
   // - web3 signing - signTypedData
@@ -68,7 +68,7 @@ export const useFollow = (profileId: any) => {
   const [authenticate, isAuthenticated] = useAuthenticate();
 
   // 1/3
-  const [createFollowTypedDataAPIMutate] = useMutation(CREATE_FOLLOW_TYPED_DATA_MUTATION, {
+  const [createFollowTypedDataAPIMutate, createFollowTypedDataAPIMutateResult] = useMutation(CREATE_FOLLOW_TYPED_DATA_MUTATION, {
     fetchPolicy: 'network-only',
     async onCompleted(createFollowTypedDataAPIData) {
       alert(JSON.stringify(createFollowTypedDataAPIData))
@@ -136,5 +136,10 @@ export const useFollow = (profileId: any) => {
       });
     }
   }
-  return [follow, followed] as const;
+
+  const isLoading = createFollowTypedDataAPIMutateResult?.loading || signTypedData?.isLoading || followWithSig?.isLoading
+  const isError = Boolean(createFollowTypedDataAPIMutateResult?.error) || signTypedData?.isError || followWithSig?.isError
+  const error = createFollowTypedDataAPIMutateResult?.error || signTypedData?.error || followWithSig?.error
+
+  return [follow, followed, error, isError, isLoading] as const;
 };

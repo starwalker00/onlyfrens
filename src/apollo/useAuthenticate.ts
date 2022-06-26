@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { gql, useLazyQuery, useMutation } from '@apollo/client'
 import { useAccount, useSignMessage } from 'wagmi'
-
+import { useReactiveVar } from "@apollo/client";
+import { isAuthenticatedVar } from './reactiveVars';
 import { getTokens, saveTokens } from 'src/utils/localStorageUtils'
 import { getAddress } from 'src/utils/jwtService'
 
@@ -24,24 +25,26 @@ export const AUTHENTICATE_MUTATION = gql`
 
 export const useAuthenticate = () => {
   const { data: account } = useAccount()
+  const isAuthenticated = useReactiveVar(isAuthenticatedVar);
 
   // - lens api query - loadChallengeAPI
   // - web3 signing - signMessage
   // - lens api mutation - authenticateAPIMutate
 
   // get authentication status for current connected address from local storage
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   useEffect(() => {
     if (typeof window !== 'undefined') { // no local storage server-side, runs only client-side
       const auth = getTokens();
       const authAddress = getAddress(auth)
       if (Boolean(auth) && authAddress == account?.address) {
         console.log("useAuthenticate:: localStorage found for address: " + account?.address)
-        setIsAuthenticated(true)
+        isAuthenticatedVar(true)
       } else {
-        console.log("useAuthenticate:: address" + account?.address + " not authenticated")
-        setIsAuthenticated(false)
+        console.log("useAuthenticate:: address " + account?.address + " not authenticated")
+        isAuthenticatedVar(false)
       }
+    } else {
+      isAuthenticatedVar(false)
     }
   }, [account])
 
@@ -84,7 +87,7 @@ export const useAuthenticate = () => {
         refreshToken: authenticateAPIData.authenticate.refreshToken,
       });
       console.log("useAuthenticate:: address" + account?.address + " authenticated")
-      setIsAuthenticated(true)
+      isAuthenticatedVar(true)
     },
     onError(error) {
       alert(error)
@@ -97,6 +100,7 @@ export const useAuthenticate = () => {
     console.log(`isAuthenticated = ${isAuthenticated}`)
     // do not auth if already authenticated or wallet not connected
     const skip = isAuthenticated || !Boolean(account?.address)
+    console.log(`skip = ${skip}`)
     if (!skip) {
       loadChallengeAPI({
         variables: {
@@ -106,7 +110,7 @@ export const useAuthenticate = () => {
         },
       });
     }
-
   }
-  return [authenticate, isAuthenticated] as const;
+
+  return { authenticate, isAuthenticated };
 };

@@ -65,7 +65,7 @@ export const useFollow = () => {
   const [followed, setFollowed] = useState<any>(false);
 
   const { data: account } = useAccount()
-  const [authenticate, isAuthenticated] = useAuthenticate();
+  const { authenticate, isAuthenticated } = useAuthenticate();
 
   // 1/3
   const [createFollowTypedDataAPIMutate, createFollowTypedDataAPIMutateResult] = useMutation(CREATE_FOLLOW_TYPED_DATA_MUTATION, {

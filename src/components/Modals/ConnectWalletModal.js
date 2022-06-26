@@ -23,7 +23,7 @@ function ConnectWalletModal({ connectWalletModalDisclosure }) {
         chainId: config.chain.CHAIN_ID,
     })
     const { data: account } = useAccount()
-    const [authenticate, isAuthenticated] = useAuthenticate();
+    const { authenticate, isAuthenticated } = useAuthenticate();
     const { data: profilesByAddress } = useGetProfilesByAddress(account?.address);
     console.log("profilesByAddress"); console.log(profilesByAddress);
 

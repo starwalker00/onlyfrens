@@ -14,3 +14,6 @@ It features :
 - AppContext
 - [Next.js Progressbar](https://www.npmjs.com/package/nextjs-progressbar)
 
+New Next.js Layout System :
+
+- [Next.js Layouts RFC](https://nextjs.org/blog/layouts-rfc)

@@ -17,3 +17,5 @@ It features :
 New Next.js Layout System :
 
 - [Next.js Layouts RFC](https://nextjs.org/blog/layouts-rfc)
+
+- [React Typescript cheatsheet](https://react-typescript-cheatsheet.netlify.app/docs/basic/getting-started/basic_type_example)

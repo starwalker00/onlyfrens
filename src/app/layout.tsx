@@ -9,6 +9,10 @@ type Props = {
 export default function RootLayout({ children }: Props) {
     return (
         <html>
+            <head>
+                <meta charSet="utf-8" />
+                <title>OnlyFrens</title>
+            </head>
             <body>
                 <Header />
                 {children}

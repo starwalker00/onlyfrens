@@ -28,6 +28,7 @@ const Logo = (props: any) => {
 export default function Header() {
     return (
         <Box
+            as="header"
             bg={useColorModeValue('gray.50', 'gray.900')}
             color={useColorModeValue('gray.700', 'gray.200')}>
             <Container
